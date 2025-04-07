@@ -16,20 +16,28 @@ func NewOrder(orderRepo OrderRepository) *Order {
 }
 
 func (u *Order) Create(ctx context.Context, request model.Order) (model.Order, error) {
-	panic("implement me")
+	err := u.orderRepo.Create(ctx, request)
+	if err != nil {
+		return model.Order{}, nil
+	}
+	return request, nil
 }
+
 func (u *Order) Get(ctx context.Context, id uint64) (model.Order, error) {
 	panic("implement me")
 
 }
+
 func (u *Order) GetList(ctx context.Context) ([]model.Order, error) {
 	panic("implement me")
 
 }
+
 func (u *Order) Update(ctx context.Context, request model.Order) (model.Order, error) {
 	panic("implement me")
 
 }
+
 func (u *Order) Delete(ctx context.Context, id uint64) error {
 	panic("implement me")
 }

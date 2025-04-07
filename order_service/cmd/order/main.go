@@ -14,7 +14,6 @@ func main() {
 	cfg, err := config.New()
 	if err != nil {
 		log.Printf("failed to parse config: %v", err)
-
 		return
 	}
 

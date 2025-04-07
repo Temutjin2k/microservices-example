@@ -6,6 +6,7 @@ import (
 	"order_service/pkg/postgres"
 
 	"github.com/caarlos0/env/v10"
+	"github.com/joho/godotenv"
 )
 
 type (
@@ -34,7 +35,13 @@ type (
 
 func New() (*Config, error) {
 	var cfg Config
-	err := env.Parse(&cfg)
+
+	err := godotenv.Load()
+	if err != nil {
+		return &cfg, err
+	}
+
+	err = env.Parse(&cfg)
 
 	return &cfg, err
 }

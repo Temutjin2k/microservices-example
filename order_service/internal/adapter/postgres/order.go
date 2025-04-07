@@ -15,8 +15,39 @@ func NewOrderRepository(db *pgxpool.Pool) *Order {
 	return &Order{db: db}
 }
 
-func (r *Order) Create(ctx context.Context, client model.Order) error {
-	panic("impliment me")
+func (r *Order) Create(ctx context.Context, order model.Order) error {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	query := `
+		INSERT INTO orders (customer_name, status) 
+		VALUES ($1, $2)
+	`
+
+	_, err = tx.Exec(ctx, query, order.CustomerName, order.Status)
+	if err != nil {
+		return err
+	}
+
+	// Inserting order items. in case when same product id is given, it check on conflict, if so it's just adding quantity for previus row.
+	queryOrderItems := `
+		INSERT INTO order_items (OrderID, ProductID, Quantity) VALUES
+		($1, $2, $3)
+		ON CONFLICT (OrderID, ProductID)
+		DO UPDATE SET Quantity = order_items.Quantity + EXCLUDED.Quantity;
+	`
+
+	for _, v := range order.OrderItems {
+		_, err = tx.Exec(ctx, queryOrderItems, v.OrderID, v.ProductID, v.Quantity)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit(ctx) // Commit the transaction
 }
 
 func (r *Order) GetWithFilter(ctx context.Context, filter model.OrderFilter) (model.Order, error) {

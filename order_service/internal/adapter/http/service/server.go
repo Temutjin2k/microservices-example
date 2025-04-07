@@ -17,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const serverIPAddress = "0.0.0.0:%d" // Changed to 0.0.0.0 for external access
+const serverIPAddress = "127.0.0.1:%d" // Changed to 0.0.0.0 for external access
 
 type API struct {
 	server *gin.Engine
@@ -34,6 +34,7 @@ func New(cfg config.Server, orderUsecase OrderUsecase) *API {
 	server := gin.New()
 
 	// Applying middleware
+	server.Use(gin.Logger())
 	server.Use(gin.Recovery())
 
 	// Binding clients
@@ -52,12 +53,14 @@ func New(cfg config.Server, orderUsecase OrderUsecase) *API {
 }
 
 func (a *API) setupRoutes() {
-	v1 := a.server.Group("/api/v1")
+	a.server.GET("/healthcheck", a.HealthCheck)
+
+	clients := a.server.Group("/orders")
 	{
-		clients := v1.Group("/clients")
-		{
-			clients.POST("/", a.orderHandler.Create)
-		}
+		clients.POST("/", a.orderHandler.Create)
+		clients.GET("/", a.orderHandler.GetList)
+		clients.GET("/:id", a.orderHandler.GetByID)
+		clients.PATCH("/:id", a.orderHandler.Create)
 	}
 }
 
@@ -92,4 +95,14 @@ func (a *API) Stop() error {
 	log.Println("HTTP server stopped successfully")
 
 	return nil
+}
+
+func (a *API) HealthCheck(c *gin.Context) {
+	c.JSON(200, map[string]any{
+		"status": "available",
+		"system_info": map[string]string{
+			"address": a.addr,
+			"mode":    a.cfg.Mode,
+		},
+	})
 }

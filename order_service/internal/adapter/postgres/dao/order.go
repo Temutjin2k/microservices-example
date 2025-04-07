@@ -1,12 +1,16 @@
 package dao
 
+import "time"
+
 type Order struct {
 	ID           int64
 	CustomerName string
-	Items        []OrderItem
+	Status       string
+	Created_at   time.Time
 }
 
 type OrderItem struct {
-	ProductID int
-	Quantity  int
+	OrderID   int64
+	ProductID int64
+	Quantity  int64
 }
