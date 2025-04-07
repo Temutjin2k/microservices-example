@@ -7,6 +7,7 @@ type Order struct {
 	CustomerName string
 	Status       string
 	Created_at   time.Time
+	IsDeleted    bool
 }
 
 type OrderItem struct {

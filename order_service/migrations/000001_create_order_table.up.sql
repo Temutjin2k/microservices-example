@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS orders(
     id bigserial PRIMARY KEY,
     customername VARCHAR(50) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'pending',  --ending, completed, cancelled
+    isdeleted BOOLEAN DEFAULT 'FALSE',
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 );
 

@@ -9,6 +9,5 @@ type OrderRepository interface {
 	Create(ctx context.Context, order model.Order) (int64, error)
 	GetWithFilter(ctx context.Context, filter model.OrderFilter) (model.Order, error)
 	GetListWithFilter(ctx context.Context, filter model.OrderFilter) ([]model.Order, error)
-	Update(ctx context.Context, filter model.OrderFilter, update model.OrderUpdateData) error
-	Delete(ctx context.Context, filter model.OrderFilter) error
+	Update(ctx context.Context, update model.OrderUpdateData) error
 }

@@ -60,7 +60,7 @@ func (a *API) setupRoutes() {
 		clients.POST("/", a.orderHandler.Create)
 		clients.GET("/", a.orderHandler.GetList)
 		clients.GET("/:id", a.orderHandler.GetByID)
-		clients.PATCH("/:id", a.orderHandler.Create)
+		clients.PATCH("/:id", a.orderHandler.SetStatus)
 	}
 }
 

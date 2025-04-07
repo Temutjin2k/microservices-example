@@ -8,6 +8,8 @@ type Order struct {
 	OrderItems   []OrderItem
 	Status       string
 	Created_at   time.Time
+
+	IsDeleted bool
 }
 
 type OrderItem struct {
@@ -17,11 +19,25 @@ type OrderItem struct {
 }
 
 type OrderUpdateData struct {
+	ID           *int64
 	CustomerName *string
 	OrderItems   *[]OrderItem
 	Status       *string
 	Created_at   *time.Time
+
+	IsDeleted *bool
+}
+
+type OrderItemUpdatedData struct {
+	OrderID   *int64
+	ProductID *int64
+	Quantity  *int64
+}
+type UpdateStatus struct {
+	OrderID int64
+	Status  string
 }
 
 type OrderFilter struct {
+	ID int64
 }

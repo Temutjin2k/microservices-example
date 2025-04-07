@@ -25,21 +25,39 @@ func (u *Order) Create(ctx context.Context, request model.Order) (model.Order, e
 	return request, nil
 }
 
-func (u *Order) Get(ctx context.Context, id uint64) (model.Order, error) {
-	panic("implement me")
-
-}
-
 func (u *Order) GetList(ctx context.Context) ([]model.Order, error) {
-	panic("implement me")
-
+	orders, err := u.orderRepo.GetListWithFilter(ctx, model.OrderFilter{})
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }
 
-func (u *Order) Update(ctx context.Context, request model.Order) (model.Order, error) {
-	panic("implement me")
+func (u *Order) Get(ctx context.Context, id int64) (model.Order, error) {
+	order, err := u.orderRepo.GetWithFilter(ctx, model.OrderFilter{ID: id})
+	if err != nil {
+		return model.Order{}, err
+	}
 
+	return order, nil
 }
 
-func (u *Order) Delete(ctx context.Context, id uint64) error {
-	panic("implement me")
+func (u *Order) SetStatus(ctx context.Context, req model.UpdateStatus) (model.Order, error) {
+	order, err := u.Get(ctx, req.OrderID)
+	if err != nil {
+		return model.Order{}, err
+	}
+
+	var updatedOrder model.OrderUpdateData
+	updatedOrder.ID = &order.ID
+	updatedOrder.Status = &req.Status
+
+	err = u.orderRepo.Update(ctx, updatedOrder)
+
+	if err != nil {
+		return model.Order{}, err
+	}
+
+	order.Status = req.Status
+	return order, nil
 }
