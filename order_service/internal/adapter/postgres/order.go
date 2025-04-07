@@ -15,21 +15,23 @@ func NewOrderRepository(db *pgxpool.Pool) *Order {
 	return &Order{db: db}
 }
 
-func (r *Order) Create(ctx context.Context, order model.Order) error {
+func (r *Order) Create(ctx context.Context, order model.Order) (int64, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer tx.Rollback(ctx)
 
 	query := `
-		INSERT INTO orders (customer_name, status) 
+		INSERT INTO orders (customername, status) 
 		VALUES ($1, $2)
+		RETURNING ID;
 	`
 
-	_, err = tx.Exec(ctx, query, order.CustomerName, order.Status)
+	var orderID int64
+	err = tx.QueryRow(ctx, query, order.CustomerName, order.Status).Scan(&orderID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// Inserting order items. in case when same product id is given, it check on conflict, if so it's just adding quantity for previus row.
@@ -41,13 +43,13 @@ func (r *Order) Create(ctx context.Context, order model.Order) error {
 	`
 
 	for _, v := range order.OrderItems {
-		_, err = tx.Exec(ctx, queryOrderItems, v.OrderID, v.ProductID, v.Quantity)
+		_, err = tx.Exec(ctx, queryOrderItems, orderID, v.ProductID, v.Quantity)
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	return tx.Commit(ctx) // Commit the transaction
+	return orderID, tx.Commit(ctx)
 }
 
 func (r *Order) GetWithFilter(ctx context.Context, filter model.OrderFilter) (model.Order, error) {

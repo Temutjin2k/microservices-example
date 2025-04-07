@@ -16,10 +16,12 @@ func NewOrder(orderRepo OrderRepository) *Order {
 }
 
 func (u *Order) Create(ctx context.Context, request model.Order) (model.Order, error) {
-	err := u.orderRepo.Create(ctx, request)
+	orderID, err := u.orderRepo.Create(ctx, request)
 	if err != nil {
-		return model.Order{}, nil
+		return model.Order{}, err
 	}
+
+	request.ID = orderID
 	return request, nil
 }
 

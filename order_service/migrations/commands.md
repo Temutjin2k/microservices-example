@@ -24,32 +24,32 @@ directory (which will be created automatically if it doesn’t already exist).
 
 ## Применение миграций
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" up
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" up
 ```
 
 ## Откат последней миграции
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" down 1
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" down 1
 ```
 
 ## Откат всех миграций
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" down
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" down
 ```
 
 ## Просмотр статуса миграций
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" version
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" version
 ```
 
 ## Пропуск миграций без их выполнения
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" force <версия>
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" force <версия>
 ```
 
 ## Применение определенного количества миграций
 ```sh
-migrate path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" up 2
+migrate -path=./migrations -database "postgres://user:password@localhost:5432/dbname?sslmode=disable" up 2
 ```
 
 psql --host=localhost --dbname=orderservice --username=temut

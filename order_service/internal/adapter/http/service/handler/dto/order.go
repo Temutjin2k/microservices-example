@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"net/http"
 	"order_service/internal/model"
 
 	"github.com/gin-gonic/gin"
@@ -27,8 +26,6 @@ func FromOrderCreateRequest(ctx *gin.Context) (model.Order, error) {
 
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
 		return model.Order{}, err
 	}
 
@@ -44,4 +41,11 @@ func FromOrderCreateRequest(ctx *gin.Context) (model.Order, error) {
 	}
 
 	return order, nil
+}
+
+func ToClientCreateResponse(order model.Order) OrderResponceRequest {
+	return OrderResponceRequest{
+		OrderID:      order.ID,
+		CustomerName: order.CustomerName,
+	}
 }
