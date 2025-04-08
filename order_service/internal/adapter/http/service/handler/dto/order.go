@@ -87,7 +87,7 @@ func ToOrderResponce(order model.Order) OrderResponce {
 	for _, item := range order.OrderItems {
 		var itemRequest OrderItemsRequest
 		itemRequest.ProductID = item.ProductID
-		itemRequest.Quantity = item.ProductID
+		itemRequest.Quantity = item.Quantity
 		orderResponce.Items = append(orderResponce.Items, itemRequest)
 	}
 

@@ -10,22 +10,22 @@ func NewInventory(invUseCase InventoryUseCase) *Inventory {
 	return &Inventory{invUseCase: invUseCase}
 }
 
-func Create(ctx *gin.Context) {
+func (h *Inventory) Create(ctx *gin.Context) {
 
 }
 
-func GetList(ctx *gin.Context) {
+func (h *Inventory) GetList(ctx *gin.Context) {
 
 }
 
-func GetByID(ctx *gin.Context) {
+func (h *Inventory) GetByID(ctx *gin.Context) {
 
 }
 
-func Update(ctx *gin.Context) {
+func (h *Inventory) Update(ctx *gin.Context) {
 
 }
 
-func Delete(ctx *gin.Context) {
+func (h *Inventory) Delete(ctx *gin.Context) {
 
 }
