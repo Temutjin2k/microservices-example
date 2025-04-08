@@ -38,13 +38,13 @@ func New(cfg config.Server, orderUsecase OrderUsecase) *API {
 	server.Use(gin.Recovery())
 
 	// Binding clients
-	clientHandler := handler.NewClient(orderUsecase)
+	orderHandler := handler.NewOrder(orderUsecase)
 
 	api := &API{
 		server:       server,
 		cfg:          cfg.HTTPServer,
 		addr:         fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
-		orderHandler: clientHandler,
+		orderHandler: orderHandler,
 	}
 
 	api.setupRoutes()

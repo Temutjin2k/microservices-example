@@ -15,12 +15,4 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (orderID) REFERENCES orders(id) ON DELETE CASCADE
 );
 
--- -- 2 Inventory service
--- CREATE TABLE products (
---     productID bigserial PRIMARY KEY,
---     name VARCHAR(50) NOT NULL,
---     description TEXT NOT NULL,
---     price NUMERIC(10, 2) NOT NULL CHECK(price > 0),
---     available INT DEFAULT 0 CHECK(available > 0)
--- );
 

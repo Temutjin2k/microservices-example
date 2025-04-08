@@ -23,7 +23,7 @@ type (
 	}
 
 	HTTPServer struct {
-		Port           int           `env:"HTTP_PORT,required"`
+		Port           int           `env:"HTTP_PORT" envDefault:"8081"`
 		ReadTimeout    time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"30s"`
 		WriteTimeout   time.Duration `env:"HTTP_WRITE_TIMEOUT" envDefault:"30s"`
 		IdleTimeout    time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"60s"`
