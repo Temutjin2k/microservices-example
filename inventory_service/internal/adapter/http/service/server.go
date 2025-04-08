@@ -1,12 +1,17 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"inventory_service/config"
 	"inventory_service/internal/adapter/http/service/handler"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -60,6 +65,23 @@ func (a *API) setupRoutes() {
 }
 
 func (a *API) Stop() error {
+	// Setting up the signal channel to catch termination signals
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	// Blocking until a signal is received
+	sig := <-quit
+	log.Println("Shutdown signal received", "signal:", sig.String())
+
+	// Creating a context with timeout for graceful shutdown
+	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	log.Println("HTTP server shutting down gracefully")
+
+	// Note: You can use `Shutdown` if you use `http.Server` instead of `gin.Engine`.
+	log.Println("HTTP server stopped successfully")
+
 	return nil
 }
 

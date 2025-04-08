@@ -28,7 +28,11 @@ func (u *Inventory) GetList(ctx context.Context, filters model.Filters) ([]model
 }
 
 func (u *Inventory) Get(ctx context.Context, id int64) (model.Inventory, error) {
-	panic("implement me")
+	inv, err := u.invRepo.Get(ctx, id)
+	if err != nil {
+		return model.Inventory{}, err
+	}
+	return inv, nil
 }
 
 func (u *Inventory) Update(ctx context.Context, request model.Inventory) (model.Inventory, error) {
@@ -36,5 +40,10 @@ func (u *Inventory) Update(ctx context.Context, request model.Inventory) (model.
 }
 
 func (u *Inventory) Delete(ctx context.Context, id int64) error {
-	panic("implement me")
+	err := u.invRepo.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
