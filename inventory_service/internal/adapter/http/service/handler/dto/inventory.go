@@ -35,3 +35,10 @@ func ToInventoryCreateRequest(ctx *gin.Context) (model.Inventory, error) {
 
 	return inventory, nil
 }
+
+func ToInventoryCreateResponce(inv model.Inventory) InventoryCreateResponce {
+	return InventoryCreateResponce{
+		ID:   inv.ID,
+		Name: inv.Name,
+	}
+}

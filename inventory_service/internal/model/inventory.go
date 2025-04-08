@@ -11,7 +11,7 @@ type Inventory struct {
 	Available   int64
 	IsDeleted   bool
 
-	Version int
+	Version int32
 }
 
 type InventoryUpdateData struct {
@@ -23,5 +23,5 @@ type InventoryUpdateData struct {
 	Available   *int64
 	IsDeleted   *bool
 
-	Version *int
+	Version *int32
 }

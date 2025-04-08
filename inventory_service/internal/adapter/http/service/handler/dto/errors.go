@@ -3,6 +3,7 @@ package dto
 import (
 	"database/sql"
 	"errors"
+	"inventory_service/internal/adapter/postgres/dao"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
@@ -25,6 +26,8 @@ func FromError(err error) *HTTPError {
 	case errors.Is(err, sql.ErrNoRows):
 		return ErrResourceNotFound
 	case errors.Is(err, pgx.ErrNoRows):
+		return ErrResourceNotFound
+	case errors.Is(err, dao.ErrRecordNotFound):
 		return ErrResourceNotFound
 	default:
 		return &HTTPError{

@@ -14,7 +14,13 @@ func NewInventory(invRepo InventoryRepostiry) *Inventory {
 }
 
 func (u *Inventory) Create(ctx context.Context, request model.Inventory) (model.Inventory, error) {
-	panic("implement me")
+	id, err := u.invRepo.Create(ctx, request)
+	if err != nil {
+		return model.Inventory{}, err
+	}
+
+	request.ID = id
+	return request, nil
 }
 
 func (u *Inventory) GetList(ctx context.Context, filters model.Filters) ([]model.Inventory, error) {

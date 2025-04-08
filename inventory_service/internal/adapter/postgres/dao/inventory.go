@@ -1,6 +1,11 @@
 package dao
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrRecordNotFound = errors.New("record not found")
 
 type Product struct {
 	ID          int64
