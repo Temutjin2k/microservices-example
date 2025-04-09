@@ -5,7 +5,11 @@ import (
 	"time"
 )
 
-var ErrRecordNotFound = errors.New("record not found")
+var (
+	ErrRecordNotFound = errors.New("record not found")
+
+	SafeSortList = []string{"id", "name", "price", "available", "-id", "-name", "-price", "-available"}
+)
 
 type Product struct {
 	ID          int64

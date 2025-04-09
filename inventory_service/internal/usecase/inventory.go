@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"inventory_service/internal/adapter/http/service/handler/dto"
 	"inventory_service/internal/model"
+	"inventory_service/pkg/validator"
 )
 
 type Inventory struct {
@@ -23,8 +25,22 @@ func (u *Inventory) Create(ctx context.Context, request model.Inventory) (model.
 	return request, nil
 }
 
-func (u *Inventory) GetList(ctx context.Context, filters model.Filters) ([]model.Inventory, error) {
-	panic("implement me")
+func (u *Inventory) GetList(ctx context.Context, filters model.Filters) ([]model.Inventory, dto.Metadata, error) {
+	v := validator.New()
+
+	model.ValidateFilters(v, filters)
+	if !v.Valid() {
+		return nil, dto.Metadata{}, ErrInvalidFilters
+	}
+
+	items, totalRecords, err := u.invRepo.GetList(ctx, filters)
+	if err != nil {
+		return nil, dto.Metadata{}, err
+	}
+
+	metadata := dto.CalculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return items, metadata, nil
 }
 
 func (u *Inventory) Get(ctx context.Context, id int64) (model.Inventory, error) {

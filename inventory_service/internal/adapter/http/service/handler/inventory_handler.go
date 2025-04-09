@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"fmt"
 	"inventory_service/internal/adapter/http/service/handler/dto"
 	"inventory_service/pkg/validator"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,11 +44,23 @@ func (h *Inventory) GetList(ctx *gin.Context) {
 	v := validator.New()
 
 	filters := dto.ParseListRequest(ctx, v)
-	fmt.Println(filters)
 	if !v.Valid() {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": v.Errors})
 		return
 	}
+
+	items, metadata, err := h.invUseCase.GetList(ctx.Request.Context(), filters)
+	if err != nil {
+		errCtx := dto.FromError(err)
+		log.Println(err)
+		ctx.JSON(errCtx.Code, gin.H{"error": errCtx.Message})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"inventory": dto.ToInventoryListReponce(items),
+		"metadata":  metadata,
+	})
 }
 
 func (h *Inventory) GetByID(ctx *gin.Context) {

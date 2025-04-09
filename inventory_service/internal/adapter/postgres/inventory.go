@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"inventory_service/internal/adapter/postgres/dao"
 	"inventory_service/internal/model"
 
@@ -64,8 +65,49 @@ func (r *InventoryRepository) Get(ctx context.Context, id int64) (model.Inventor
 	return item, nil
 }
 
-func (r *InventoryRepository) GetList(ctx context.Context, filters model.Filters) ([]model.Inventory, error) {
-	panic("implement me")
+func (r *InventoryRepository) GetList(ctx context.Context, filters model.Filters) ([]model.Inventory, int, error) {
+	query := fmt.Sprintf(`
+        SELECT count(*) OVER(), id, created_at, name, description, price, available, isdeleted, version
+        FROM inventory
+        WHERE isdeleted = false
+        ORDER BY %s %s, id ASC
+        LIMIT $1 OFFSET $2`, filters.SortColumn(), filters.SortDirection())
+
+	args := []any{filters.Limit(), filters.Offset()}
+
+	var totalRecords int
+	var items []model.Inventory
+
+	rows, err := r.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item model.Inventory
+		err := rows.Scan(
+			&totalRecords,
+			&item.ID,
+			&item.CreatedAt,
+			&item.Name,
+			&item.Description,
+			&item.Price,
+			&item.Available,
+			&item.IsDeleted,
+			&item.Version,
+		)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to scan row: %w", err)
+		}
+		items = append(items, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, 0, fmt.Errorf("rows error: %w", err)
+	}
+
+	return items, totalRecords, nil
 }
 
 func (r *InventoryRepository) Update(ctx context.Context, item model.Inventory) error {

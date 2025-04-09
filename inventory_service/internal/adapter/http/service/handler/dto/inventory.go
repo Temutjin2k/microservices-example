@@ -1,9 +1,9 @@
 package dto
 
 import (
+	"inventory_service/internal/adapter/postgres/dao"
 	"inventory_service/internal/model"
 	"inventory_service/pkg/validator"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -79,36 +79,24 @@ func ToInventoryResponse(inv model.Inventory) InventoryResponse {
 }
 
 func ParseListRequest(ctx *gin.Context, v *validator.Validator) model.Filters {
-	// Default values
-	page := 1
-	pageSize := 20
-	sort := "id"
-	sortSafelist := []string{"id", "name", "price", "-id", "-name", "-price"}
+	filter := model.Filters{
+		Page:         1,                // Default current page
+		PageSize:     8,                // Default page size
+		Sort:         "id",             // Default sort value
+		SortSafelist: dao.SafeSortList, // Available sort options
+	}
 
 	// Parse page parameter
-	if pageStr := ctx.Query("page"); pageStr != "" {
-		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
-			page = p
-		}
-	}
+	filter.Page = ReadInt(ctx, "page", filter.Page, v)
 
 	// Parse page_size parameter
-	if pageSizeStr := ctx.Query("page_size"); pageSizeStr != "" {
-		if ps, err := strconv.Atoi(pageSizeStr); err == nil && ps > 0 {
-			pageSize = ps
-		}
-	}
+	filter.PageSize = ReadInt(ctx, "page_size", filter.PageSize, v)
 
 	// Parse sort parameter
-	if sortParam := ctx.Query("sort"); sortParam != "" {
-		sort = sortParam
-	}
+	filter.Sort = ReadString(ctx, "sort", filter.Sort)
 
-	filter := model.Filters{
-		Page:         page,
-		PageSize:     pageSize,
-		Sort:         sort,
-		SortSafelist: sortSafelist,
+	if sortParam := ctx.Query("sort"); sortParam != "" {
+		filter.Sort = sortParam
 	}
 
 	model.ValidateFilters(v, filter)
