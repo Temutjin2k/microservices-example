@@ -12,7 +12,7 @@ func ReadIDParam(ctx *gin.Context) (int64, error) {
 
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		return -1, nil
+		return -1, err
 	}
 	return id, nil
 }

@@ -4,6 +4,7 @@ import (
 	"inventory_service/internal/adapter/postgres/dao"
 	"inventory_service/internal/model"
 	"inventory_service/pkg/validator"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,13 @@ type InventoryCreateRequest struct {
 type InventoryCreateResponce struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
+}
+
+type InventoryUpdateRequest struct {
+	Name        *string  `json:"name"`
+	Description *string  `json:"description"`
+	Price       *float64 `json:"price"`
+	Available   *int64   `json:"available"`
 }
 
 type InventoryResponse struct {
@@ -45,6 +53,40 @@ func ToInventoryCreateRequest(ctx *gin.Context) (model.Inventory, error) {
 		Price:       req.Price,
 		Available:   req.Available,
 	}
+
+	return inventory, nil
+}
+
+func ToInventoryUpdateRequest(ctx *gin.Context) (model.InventoryUpdateData, error) {
+	id, err := ReadIDParam(ctx)
+	if err != nil {
+		return model.InventoryUpdateData{}, err
+	}
+
+	var req InventoryUpdateRequest
+	err = ctx.ShouldBindJSON(&req)
+	if err != nil {
+		return model.InventoryUpdateData{}, err
+	}
+
+	var inventory model.InventoryUpdateData
+
+	expectedVersion := ctx.GetHeader("X-Expected-Version")
+
+	if expectedVersion != "" {
+		expectedVersionInt, err := strconv.ParseInt(expectedVersion, 10, 32)
+		if err != nil {
+			return model.InventoryUpdateData{}, err
+		}
+		result := int32(expectedVersionInt)
+		inventory.Version = &result
+	}
+
+	inventory.ID = &id
+	inventory.Name = req.Name
+	inventory.Description = req.Description
+	inventory.Price = req.Price
+	inventory.Available = req.Available
 
 	return inventory, nil
 }

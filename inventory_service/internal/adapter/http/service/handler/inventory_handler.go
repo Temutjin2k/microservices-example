@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"inventory_service/internal/adapter/http/service/handler/dto"
 	"inventory_service/pkg/validator"
 	"log"
@@ -81,7 +82,28 @@ func (h *Inventory) GetByID(ctx *gin.Context) {
 }
 
 func (h *Inventory) Update(ctx *gin.Context) {
+	item, err := dto.ToInventoryUpdateRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	itemUpdated, err := h.invUseCase.Update(ctx.Request.Context(), item)
+	if err != nil {
+		if errors.Is(err, dto.ErrUnprocessableEntity) {
+			v := validator.New()
+			dto.ValidateInventory(v, itemUpdated)
+			if !v.Valid() {
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": v.Errors})
+				return
+			}
+		}
+		errCtx := dto.FromError(err)
+		ctx.JSON(errCtx.Code, gin.H{"error": errCtx.Message})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"inventory": dto.ToInventoryResponse(itemUpdated)})
 }
 
 func (h *Inventory) Delete(ctx *gin.Context) {

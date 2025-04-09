@@ -19,8 +19,8 @@ func NewInventoryRepository(db *pgxpool.Pool) *InventoryRepository {
 
 func (r *InventoryRepository) Create(ctx context.Context, item model.Inventory) (int64, error) {
 	query := `
-		INSERT INTO inventory (name, description, price, available, isdeleted, version)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO inventory (name, description, price, available)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
 
@@ -30,8 +30,6 @@ func (r *InventoryRepository) Create(ctx context.Context, item model.Inventory) 
 		item.Description,
 		item.Price,
 		item.Available,
-		item.IsDeleted,
-		item.Version,
 	).Scan(&id)
 	if err != nil {
 		return 0, err
@@ -110,8 +108,29 @@ func (r *InventoryRepository) GetList(ctx context.Context, filters model.Filters
 	return items, totalRecords, nil
 }
 
-func (r *InventoryRepository) Update(ctx context.Context, item model.Inventory) error {
-	panic("implement me")
+func (r *InventoryRepository) Update(ctx context.Context, item *model.Inventory) error {
+	query := `
+		UPDATE inventory
+		SET name = $1, description = $2, price = $3, available = $4, version = version + 1
+		WHERE id = $5 AND version = $6
+		RETURNING version
+	`
+
+	args := []any{
+		item.Name,
+		item.Description,
+		item.Price,
+		item.Available,
+		item.ID,
+		item.Version,
+	}
+
+	err := r.db.QueryRow(ctx, query, args...).Scan(&item.Version)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *InventoryRepository) Delete(ctx context.Context, id int64) error {
