@@ -41,3 +41,9 @@ type UpdateStatus struct {
 type OrderFilter struct {
 	ID int64
 }
+
+// OrderInfo
+type OrderInfo struct {
+	Order         Order
+	OrderResponce OrderResponce
+}

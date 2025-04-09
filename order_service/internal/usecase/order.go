@@ -2,30 +2,83 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"order_service/internal/model"
 )
 
 type Order struct {
-	orderRepo OrderRepository
+	orderRepo        OrderRepository
+	inventoryService InventoryService
 }
 
-func NewOrder(orderRepo OrderRepository) *Order {
+func NewOrder(orderRepo OrderRepository, inventoryService InventoryService) *Order {
 	return &Order{
-		orderRepo: orderRepo,
+		orderRepo:        orderRepo,
+		inventoryService: inventoryService,
 	}
 }
 
-func (u *Order) Create(ctx context.Context, request model.Order) (model.Order, error) {
-	// TODO
-	// For each item send "/inventory/:id", and process each of them
-
+func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderResponce, error) {
+	// Inserting order to database
 	orderID, err := u.orderRepo.Create(ctx, request)
 	if err != nil {
-		return model.Order{}, err
+		return model.OrderResponce{}, err
 	}
 
-	request.ID = orderID
-	return request, nil
+	// Metadata of items
+	var orderItemResponces []model.OrderItemResponce
+	var totalPrice int64
+	for _, item := range request.OrderItems {
+		var orderItemResp model.OrderItemResponce
+		orderItemResp.ProductID = item.ProductID
+
+		// Getting inventory from inventory service
+		inventoryItem, err := u.inventoryService.GetById(item.ProductID)
+		if err != nil {
+			orderItemResp.Status = "rejected"
+			orderItemResp.Reason = err.Error()
+			orderItemResponces = append(orderItemResponces, orderItemResp)
+			continue
+		}
+
+		price := inventoryItem.Price * item.Quantity
+		newAvailability := inventoryItem.Available - item.Quantity
+
+		if newAvailability < 0 {
+			orderItemResp.Status = "rejected"
+			orderItemResp.Reason = "insufficient_inventory"
+			orderItemResponces = append(orderItemResponces, orderItemResp)
+			continue
+		}
+
+		// Trying to set new availability
+		err = u.inventoryService.Substruct(item.ProductID, newAvailability, inventoryItem.Version)
+		if err != nil {
+			orderItemResp.Status = "rejected"
+			orderItemResp.Reason = err.Error()
+			orderItemResponces = append(orderItemResponces, orderItemResp)
+			continue
+		}
+
+		orderItemResp.Name = inventoryItem.Name
+		orderItemResp.Price = price
+		orderItemResp.Status = "accepted"
+
+		totalPrice += price
+
+		orderItemResponces = append(orderItemResponces, orderItemResp)
+	}
+
+	fmt.Println(orderItemResponces)
+
+	responce := model.OrderResponce{
+		OrderID:      orderID,
+		CustomerName: request.CustomerName,
+		Items:        orderItemResponces,
+		Total:        totalPrice,
+	}
+
+	return responce, nil
 }
 
 func (u *Order) GetList(ctx context.Context) ([]model.Order, error) {

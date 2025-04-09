@@ -23,6 +23,21 @@ type OrderCreateResponceRequest struct {
 	CustomerName string `json:"customer_name"`
 }
 
+type OrderCreateResponceRequestV2 struct {
+	OrderID      int64                               `json:"order_id"`
+	CustomerName string                              `json:"customer_name"`
+	Items        []OrderItemsCreateResponceRequestV2 `json:"items"`
+	Total        int64                               `json:"total"`
+}
+
+type OrderItemsCreateResponceRequestV2 struct {
+	ProductID int64  `json:"product_id"`
+	Name      string `json:"name"`
+	Price     int64  `json:"price,omitempty"`  // Total price
+	Status    string `json:"status,omitempty"` // accepted, rejected
+	Reason    string `json:"reason,omitempty"` // if rejected
+}
+
 type OrderResponce struct {
 	OrderID      int64               `json:"order_id"`
 	CustomerName string              `json:"customer_name"`
@@ -58,10 +73,24 @@ func FromOrderCreateRequest(ctx *gin.Context) (model.Order, error) {
 	return order, nil
 }
 
-func ToOrderCreateResponse(order model.Order) OrderCreateResponceRequest {
-	return OrderCreateResponceRequest{
-		OrderID:      order.ID,
+func ToOrderCreateResponse(order model.OrderResponce) OrderCreateResponceRequestV2 {
+	var itemsInfo []OrderItemsCreateResponceRequestV2
+
+	for _, v := range order.Items {
+		itemsInfo = append(itemsInfo, OrderItemsCreateResponceRequestV2{
+			ProductID: v.ProductID,
+			Name:      v.Name,
+			Price:     v.Price,
+			Status:    v.Status,
+			Reason:    v.Reason,
+		})
+	}
+
+	return OrderCreateResponceRequestV2{
+		OrderID:      order.OrderID,
 		CustomerName: order.CustomerName,
+		Items:        itemsInfo,
+		Total:        order.Total,
 	}
 }
 

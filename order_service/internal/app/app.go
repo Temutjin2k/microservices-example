@@ -10,6 +10,7 @@ import (
 
 	"order_service/config"
 
+	"order_service/internal/adapter/http/myrouter"
 	httpservice "order_service/internal/adapter/http/service"
 	postgresrepo "order_service/internal/adapter/postgres"
 	"order_service/internal/usecase"
@@ -35,10 +36,17 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	log.Println("connection established")
 
+	// Repository
 	orderRepo := postgresrepo.NewOrderRepository(postgresDB.Pool)
 
+	// Inventory Service
+	inv_router, err := myrouter.NewInventoryRouter("http://localhost:8082") // HardCode
+	if err != nil {
+		return nil, fmt.Errorf("inventory router: %w", err)
+	}
+
 	// UseCase
-	orderUsecase := usecase.NewOrder(orderRepo)
+	orderUsecase := usecase.NewOrder(orderRepo, inv_router)
 
 	// http service
 	httpServer := httpservice.New(cfg.Server, orderUsecase)
