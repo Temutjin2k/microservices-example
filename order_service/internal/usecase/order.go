@@ -16,6 +16,9 @@ func NewOrder(orderRepo OrderRepository) *Order {
 }
 
 func (u *Order) Create(ctx context.Context, request model.Order) (model.Order, error) {
+	// TODO
+	// For each item send "/inventory/:id", and process each of them
+
 	orderID, err := u.orderRepo.Create(ctx, request)
 	if err != nil {
 		return model.Order{}, err
