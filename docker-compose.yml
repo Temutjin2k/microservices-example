@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: microservices_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    depends_on:
+      - inventory_service
+      - order_service
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+    restart: on-failure
+
+  inventory_service:
+    build:
+      context: ./inventory_service
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=microservices_db
+    ports:
+      - "8082:8082"
+    restart: on-failure
+
+  order_service:
+    build:
+      context: ./order_service
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=microservices_db
+    ports:
+      - "8081:8081"
+    restart: on-failure
+
+volumes:
+  pgdata:

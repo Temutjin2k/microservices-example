@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_name\": \"Merey\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"quantity\": 2 \n        }\n    ]\n}",
+							"raw": "{\n    \"customer_name\": \"Beibarys\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"quantity\": 2\n        },\n        {\n            \"product_id\": 2,\n            \"quantity\": 2\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -58,13 +58,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/orders/2",
+							"raw": "{{base_url}}/orders/3",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"orders",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -85,10 +85,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/orders/2",
-							"host": [
-								"{{base_url}}"
-							],
+							"raw": "/orders/2",
 							"path": [
 								"orders",
 								"2"
@@ -109,7 +106,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Coffee\",\n    \"price\": 50,\n    \"description\": \"Delicious coffee\",\n    \"available\": 10\n}",
+							"raw": "{\n    \"name\": \"Bananas\",\n    \"price\": 150,\n    \"description\": \"African bananas\",\n    \"available\": 77\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -117,9 +114,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{inv_urll}}/products",
+							"raw": "{{base_url}}/products",
 							"host": [
-								"{{inv_urll}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"products"
@@ -134,12 +131,26 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{inv_urll}}/products",
+							"raw": "{{base_url}}/products?page=2&page_size=3&sort=-name",
 							"host": [
-								"{{inv_urll}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "page_size",
+									"value": "3"
+								},
+								{
+									"key": "sort",
+									"value": "-name"
+								}
 							]
 						}
 					},
@@ -151,9 +162,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{inv_urll}}/products/1",
+							"raw": "{{base_url}}/products/1",
 							"host": [
-								"{{inv_urll}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"products",
@@ -168,10 +179,19 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"price\": 200\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{inv_urll}}/products/1",
+							"raw": "{{base_url}}/products/1",
 							"host": [
-								"{{inv_urll}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"products",
@@ -187,13 +207,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{inv_urll}}/products/1",
+							"raw": "{{base_url}}/products/3",
 							"host": [
-								"{{inv_urll}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"products",
-								"1"
+								"3"
 							]
 						}
 					},

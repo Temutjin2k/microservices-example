@@ -14,12 +14,12 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 migrate create -seq -ext=.sql -dir=./migrations name
 ```
 
-### In this command:
-- The -seq flag indicates that we want to use sequential numbering like 0001, 0002, ...
-  for the migration files (instead of a Unix timestamp, which is the default).
-- The -ext flag indicates that we want to give the migration files the extension .sql.
-- The -dir flag indicates that we want to store the migration files in the ./migrations
-directory (which will be created automatically if it doesn’t already exist).
+### В этой команде:
+- Флаг -seq указывает, что мы хотим использовать последовательную нумерацию типа 0001, 0002, ...
+  для файлов миграции (вместо временной метки Unix, которая используется по умолчанию).
+- Флаг -ext указывает, что мы хотим присвоить файлам миграции расширение .sql.
+- Флаг -dir указывает, что мы хотим хранить файлы миграции в каталоге ./migrations
+  (который будет создан автоматически, если он еще не существует).
 
 
 ## Применение миграций
