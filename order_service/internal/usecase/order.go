@@ -41,6 +41,8 @@ func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderRes
 			continue
 		}
 
+		orderItemResp.Name = inventoryItem.Name
+
 		price := inventoryItem.Price * item.Quantity
 		newAvailability := inventoryItem.Available - item.Quantity
 
@@ -60,7 +62,6 @@ func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderRes
 			continue
 		}
 
-		orderItemResp.Name = inventoryItem.Name
 		orderItemResp.Price = price
 		orderItemResp.Status = "accepted"
 

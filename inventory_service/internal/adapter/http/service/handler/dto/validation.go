@@ -11,4 +11,5 @@ func ValidateInventory(v *validator.Validator, inv model.Inventory) {
 
 	v.Check(len(inv.Description) != 0, "description", "must be provided")
 	v.Check(inv.Price > 0, "price", "must be positive")
+	v.Check(inv.Available > 0, "availabilty", "must be positive")
 }
