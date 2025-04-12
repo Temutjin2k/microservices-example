@@ -54,6 +54,10 @@ The system consists of three services:
 
 ---
 
+# Design
+![image](https://github.com/user-attachments/assets/eb47f52a-3c27-4322-8b96-c456d63a8f14)
+
+
 
 ## 👨‍🎓 Author
 
