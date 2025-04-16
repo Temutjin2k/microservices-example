@@ -19,6 +19,7 @@ type (
 	// We can have multiple servers like gRPC or smth else.
 	Server struct {
 		HTTPServer HTTPServer
+		GRPCServer GRPCServer
 	}
 
 	HTTPServer struct {
@@ -29,6 +30,13 @@ type (
 		MaxHeaderBytes int           `env:"HTTP_MAX_HEADER_BYTES" envDefault:"1048576"` // 1 MB
 		TrustedProxies []string      `env:"HTTP_TRUSTED_PROXIES" envSeparator:","`
 		Mode           string        `env:"GIN_MODE" envDefault:"release"` // Can be: release, debug, test
+	}
+
+	GRPCServer struct {
+		Port                  int16         `env:"GRPC_PORT,notEmpty"`
+		MaxRecvMsgSizeMiB     int           `env:"GRPC_MAX_MESSAGE_SIZE_MIB" envDefault:"12"`
+		MaxConnectionAge      time.Duration `env:"GRPC_MAX_CONNECTION_AGE" envDefault:"30s"`
+		MaxConnectionAgeGrace time.Duration `env:"GRPC_MAX_CONNECTION_AGE_GRACE" envDefault:"10s"`
 	}
 )
 

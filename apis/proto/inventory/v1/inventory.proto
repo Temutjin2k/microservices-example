@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package inventory;
+package inventorypb;
 
-option go_package = "inventory_service/genproto/inventory";
+option go_package = "inventory_service/internal/adapter/grpc/genproto/inventorypb";
 
 // INVENTORY SERVICE
 service InventoryService {
