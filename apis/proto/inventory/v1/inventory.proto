@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "inventory_service/genproto/inventory";
+
+// INVENTORY SERVICE
+service InventoryService {
+  rpc CreateInventory(CreateInventoryRequest) returns (CreateInventoryResponse);
+  rpc GetInventoryList(GetInventoryListRequest) returns (GetInventoryListResponse);
+  rpc GetInventoryByID(GetInventoryByIDRequest) returns (Inventory);
+  rpc UpdateInventory(UpdateInventoryRequest) returns (Inventory);
+  rpc DeleteInventory(DeleteInventoryRequest) returns (DeleteInventoryResponse);
+}
+
+// CREATE
+message CreateInventoryRequest {
+  string name = 1;
+  string description = 2;
+  double price = 3;
+  int64 available = 4;
+}
+
+message CreateInventoryResponse {
+  int64 id = 1;
+  string name = 2;
+}
+
+// LIST
+message GetInventoryListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string sort = 3;
+}
+
+message GetInventoryListResponse {
+  repeated Inventory inventory = 1;
+  Metadata metadata = 2;
+}
+
+// GET BY ID
+message GetInventoryByIDRequest {
+  int64 id = 1;
+}
+
+// UPDATE
+message UpdateInventoryRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int64 available = 5;
+  int32 expected_version = 6;
+}
+
+// DELETE
+message DeleteInventoryRequest {
+  int64 id = 1;
+}
+
+message DeleteInventoryResponse {
+  bool success = 1;
+}
+
+// INVENTORY ENTITY
+message Inventory {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int64 available = 5;
+  string created_at = 6;
+  int32 version = 7;
+}
+
+// PAGINATION METADATA
+message Metadata {
+  int32 current_page = 1;
+  int32 page_size = 2;
+  int32 first_page = 3;
+  int32 last_page = 4;
+  int32 total_records = 5;
+}
