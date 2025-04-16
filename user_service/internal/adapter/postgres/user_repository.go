@@ -60,15 +60,15 @@ func (r *UserRepo) Update(ctx context.Context, update model.User) error {
 	return nil
 }
 
-func (r *UserRepo) GetProfile(ctx context.Context, id int64) (model.User, error) {
+func (r *UserRepo) GetProfile(ctx context.Context, email string) (model.User, error) {
 	query := `
 		SELECT id, created_at, name, email, avatar_link, password_hash, version, is_deleted
 		FROM users
-		WHERE id = $1 AND is_deleted = false
+		WHERE email = $1 AND is_deleted = false
 	`
 
 	var daoUser dao.User
-	err := r.db.QueryRow(ctx, query, id).Scan(
+	err := r.db.QueryRow(ctx, query, email).Scan(
 		&daoUser.ID,
 		&daoUser.CreatedAt,
 		&daoUser.Name,

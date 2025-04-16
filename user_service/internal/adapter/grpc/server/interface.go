@@ -1,12 +1,9 @@
 package server
 
 import (
-	"context"
-	"user_service/internal/model"
+	"user_service/internal/adapter/grpc/frontend"
 )
 
 type UserUseCase interface {
-	Register(ctx context.Context, user model.User) (model.User, error)
-	Authenticate(ctx context.Context, user model.User) (model.Token, error)
-	GetProfile(ctx context.Context, id int64) (model.User, error)
+	frontend.UserUseCase
 }
