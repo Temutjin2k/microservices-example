@@ -6,8 +6,8 @@ import (
 	"log"
 	"net"
 	"user_service/config"
-	"user_service/internal/adapter/grpc/frontend"
 	"user_service/internal/adapter/grpc/genproto/userpb"
+	"user_service/internal/adapter/grpc/server/frontend"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

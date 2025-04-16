@@ -9,6 +9,7 @@ type (
 		Name         string
 		Email        string
 		AvatarLink   string
+		Password     string
 		PasswordHash string
 		Version      int32
 		IsDeleted    bool

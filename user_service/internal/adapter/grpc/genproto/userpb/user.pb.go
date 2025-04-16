@@ -91,7 +91,7 @@ func (x *UserRequest) GetAvatarLink() string {
 
 type UserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -127,7 +127,7 @@ func (*UserResponse) Descriptor() ([]byte, []int) {
 	return file_apis_proto_user_v1_user_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UserResponse) GetUserId() int32 {
+func (x *UserResponse) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -239,7 +239,7 @@ func (x *AuthResponse) GetToken() string {
 
 type UserID struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -274,7 +274,7 @@ func (*UserID) Descriptor() ([]byte, []int) {
 	return file_apis_proto_user_v1_user_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UserID) GetUserId() int32 {
+func (x *UserID) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -283,11 +283,11 @@ func (x *UserID) GetUserId() int32 {
 
 type UserProfile struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	AvatarLink    string                 `protobuf:"bytes,4,opt,name=avatar_link,json=avatarLink,proto3" json:"avatar_link,omitempty"`
-	Version       string                 `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty"`
+	Version       int32                  `protobuf:"varint,5,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,7 +322,7 @@ func (*UserProfile) Descriptor() ([]byte, []int) {
 	return file_apis_proto_user_v1_user_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UserProfile) GetUserId() int32 {
+func (x *UserProfile) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -350,11 +350,11 @@ func (x *UserProfile) GetAvatarLink() string {
 	return ""
 }
 
-func (x *UserProfile) GetVersion() string {
+func (x *UserProfile) GetVersion() int32 {
 	if x != nil {
 		return x.Version
 	}
-	return ""
+	return 0
 }
 
 var File_apis_proto_user_v1_user_proto protoreflect.FileDescriptor
@@ -369,7 +369,7 @@ const file_apis_proto_user_v1_user_proto_rawDesc = "" +
 	"\vavatar_link\x18\x04 \x01(\tR\n" +
 	"avatarLink\"A\n" +
 	"\fUserResponse\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x18\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"?\n" +
 	"\vAuthRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
@@ -377,14 +377,14 @@ const file_apis_proto_user_v1_user_proto_rawDesc = "" +
 	"\fAuthResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"!\n" +
 	"\x06UserID\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"\x8b\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\x8b\x01\n" +
 	"\vUserProfile\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x12\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1f\n" +
 	"\vavatar_link\x18\x04 \x01(\tR\n" +
 	"avatarLink\x12\x18\n" +
-	"\aversion\x18\x05 \x01(\tR\aversion2\xbe\x01\n" +
+	"\aversion\x18\x05 \x01(\x05R\aversion2\xbe\x01\n" +
 	"\vUserService\x129\n" +
 	"\fRegisterUser\x12\x13.userpb.UserRequest\x1a\x14.userpb.UserResponse\x12=\n" +
 	"\x10AuthenticateUser\x12\x13.userpb.AuthRequest\x1a\x14.userpb.AuthResponse\x125\n" +

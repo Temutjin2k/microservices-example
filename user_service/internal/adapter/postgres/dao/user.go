@@ -11,7 +11,7 @@ type User struct {
 	Name         string    `db:"name"`
 	Email        string    `db:"email"`
 	AvatarLink   string    `db:"avatar_link"`
-	PasswordHash string    `db:"password_hash"`
+	PasswordHash []byte    `db:"password_hash"`
 	Version      int32     `db:"version"`
 	IsDeleted    bool      `db:"is_deleted"`
 }
@@ -23,7 +23,7 @@ func FromUser(m model.User) User {
 		Name:         m.Name,
 		Email:        m.Email,
 		AvatarLink:   m.AvatarLink,
-		PasswordHash: m.PasswordHash,
+		PasswordHash: []byte(m.PasswordHash),
 		Version:      m.Version,
 		IsDeleted:    m.IsDeleted,
 	}
@@ -36,7 +36,7 @@ func ToUser(u User) model.User {
 		Name:         u.Name,
 		Email:        u.Email,
 		AvatarLink:   u.AvatarLink,
-		PasswordHash: u.PasswordHash,
+		PasswordHash: string(u.PasswordHash),
 		Version:      u.Version,
 		IsDeleted:    u.IsDeleted,
 	}
