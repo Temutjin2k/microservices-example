@@ -52,9 +52,9 @@ func (h *Inventory) GetInventoryList(ctx context.Context, req *inventorypb.GetIn
 	v := validator.New()
 
 	filters := model.Filters{
-		Page:         int(req.GetPage()),
-		PageSize:     int(req.GetPageSize()),
-		Sort:         req.GetSort(),
+		Page:         dto.ReadIntDefault(int(req.GetPage()), 1),
+		PageSize:     dto.ReadIntDefault(int(req.GetPageSize()), 8),
+		Sort:         dto.ReadStringDefault(req.GetSort(), "id"),
 		SortSafelist: []string{"id", "name", "price", "-id", "-name", "-price"},
 	}
 
@@ -72,6 +72,7 @@ func (h *Inventory) GetInventoryList(ctx context.Context, req *inventorypb.GetIn
 	for _, item := range inventories {
 		response.Inventory = append(response.Inventory, dto.ToInventoryProto(item))
 	}
+
 	response.Metadata = &inventorypb.Metadata{
 		CurrentPage:  int32(metadata.CurrentPage),
 		PageSize:     int32(metadata.PageSize),
