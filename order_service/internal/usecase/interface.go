@@ -14,5 +14,5 @@ type OrderRepository interface {
 
 type InventoryService interface {
 	GetById(id int64) (model.Inventory, error)
-	Substruct(id, newAvailability int64, version int32) error
+	SetAvailability(id, newAvailability int64, version int32) error
 }

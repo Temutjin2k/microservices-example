@@ -58,7 +58,7 @@ func (r *InventoryRouter) GetById(id int64) (model.Inventory, error) {
 }
 
 // Sends http PATCH request to change "availability" of product with Header "X-Expected-Version"
-func (r *InventoryRouter) Substruct(id, newAvailability int64, version int32) error {
+func (r *InventoryRouter) SetAvailability(id, newAvailability int64, version int32) error {
 	fullURL := r.url + fmt.Sprintf("%d", id)
 
 	// Create request body

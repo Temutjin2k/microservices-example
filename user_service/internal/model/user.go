@@ -13,4 +13,7 @@ type (
 		Version      int32
 		IsDeleted    bool
 	}
+
+	Token struct {
+	}
 )

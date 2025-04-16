@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package orderpb;
+
+import "google/protobuf/timestamp.proto";
+
+message OrderItemRequest {
+  int64 product_id = 1;
+  int64 quantity = 2;
+}
+
+message OrderCreateRequest {
+  string customer_name = 1;
+  repeated OrderItemRequest items = 2;
+}
+
+message OrderItemResponse {
+  int64 product_id = 1;
+  string name = 2;
+  int64 price = 3;
+  string status = 4;
+  string reason = 5;
+}
+
+message OrderCreateResponse {
+  int64 order_id = 1;
+  string customer_name = 2;
+  repeated OrderItemResponse items = 3;
+  int64 total = 4;
+}
+
+message Order {
+  int64 order_id = 1;
+  string customer_name = 2;
+  repeated OrderItemRequest items = 3;
+  string status = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message OrderListResponse {
+  repeated Order orders = 1;
+}
+
+message OrderSetStatusRequest {
+  int64  order_id = 1;
+  string status = 2;
+}
+
+message OrderResponseWrapper {
+  Order order = 1;
+}

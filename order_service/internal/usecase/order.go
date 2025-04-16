@@ -19,14 +19,11 @@ func NewOrder(orderRepo OrderRepository, inventoryService InventoryService) *Ord
 }
 
 func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderResponce, error) {
-	// Inserting order to database
-	orderID, err := u.orderRepo.Create(ctx, request)
-	if err != nil {
-		return model.OrderResponce{}, err
-	}
 
 	// Metadata of items
 	var orderItemResponces []model.OrderItemResponce
+	var successOrderItems []model.OrderItem
+
 	var totalPrice int64
 	for _, item := range request.OrderItems {
 		var orderItemResp model.OrderItemResponce
@@ -54,7 +51,7 @@ func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderRes
 		}
 
 		// Trying to set new availability
-		err = u.inventoryService.Substruct(item.ProductID, newAvailability, inventoryItem.Version)
+		err = u.inventoryService.SetAvailability(item.ProductID, newAvailability, inventoryItem.Version)
 		if err != nil {
 			orderItemResp.Status = "rejected"
 			orderItemResp.Reason = err.Error()
@@ -67,7 +64,15 @@ func (u *Order) Create(ctx context.Context, request model.Order) (model.OrderRes
 
 		totalPrice += price
 
+		successOrderItems = append(successOrderItems, item)
 		orderItemResponces = append(orderItemResponces, orderItemResp)
+	}
+
+	// Inserting only accepted orders to database
+	request.OrderItems = successOrderItems
+	orderID, err := u.orderRepo.Create(ctx, request)
+	if err != nil {
+		return model.OrderResponce{}, err
 	}
 
 	fmt.Println(orderItemResponces)
