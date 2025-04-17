@@ -4,6 +4,9 @@ package orderpb;
 
 import "google/protobuf/timestamp.proto";
 
+option go_package = "order_service/internal/adapter/grpc/genproto/orderpb";
+
+
 service OrderService {
   rpc CreateOrder(OrderCreateRequest) returns (OrderCreateResponse);
   rpc GetOrderById(OrderID) returns (OrderResponseWrapper);

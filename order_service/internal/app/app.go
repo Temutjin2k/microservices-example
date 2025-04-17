@@ -10,6 +10,7 @@ import (
 
 	"order_service/config"
 
+	grpcserver "order_service/internal/adapter/grpc/server"
 	"order_service/internal/adapter/http/myrouter"
 	httpservice "order_service/internal/adapter/http/service"
 	postgresrepo "order_service/internal/adapter/postgres"
@@ -22,7 +23,7 @@ const serviceName = "Order"
 type App struct {
 	httpServer *httpservice.API
 	postgresDB *postgres.PostgreDB
-	// grpcServer *grpc.Server // Example
+	grpcServer *grpcserver.API
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -45,38 +46,52 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("inventory router: %w", err)
 	}
 
+	// inventoryServiceGRPCConn, err := grpcconn.New(cfg.GRPC.GRPCInventory.InventoryServiceURL)
+
 	// UseCase
 	orderUsecase := usecase.NewOrder(orderRepo, inv_router)
 
 	// http service
 	httpServer := httpservice.New(cfg.Server, orderUsecase)
 
+	grpcServer := grpcserver.New(cfg.Server.GRPCServer, orderUsecase)
+
 	app := &App{
 		httpServer: httpServer,
 		postgresDB: postgresDB,
+		grpcServer: grpcServer,
 	}
 
 	return app, nil
 }
 
 // TODO: close postgres connection
-func (a *App) Close() {
+func (a *App) Close(ctx context.Context) {
 	// Closing http server
 	err := a.httpServer.Stop()
-
-	// Closing postgres connection
-	a.postgresDB.Pool.Close()
 
 	if err != nil {
 		log.Println("failed to shutdown service", err)
 	}
+
+	err = a.grpcServer.Stop(ctx)
+	if err != nil {
+		log.Println("failed to shutdown service", err)
+	}
+
+	// Closing postgres connection
+	a.postgresDB.Pool.Close()
 }
 
 func (a *App) Run() error {
 	errCh := make(chan error, 1)
+	ctx := context.Background()
 
 	// Running http server
 	a.httpServer.Run(errCh)
+
+	// Running gRPC server
+	a.grpcServer.Run(ctx, errCh)
 
 	log.Printf("service %v started\n", serviceName)
 
@@ -91,7 +106,7 @@ func (a *App) Run() error {
 	case s := <-shutdownCh:
 		log.Printf("received signal: %v. Running graceful shutdown...\n", s)
 
-		a.Close()
+		a.Close(ctx)
 		log.Println("graceful shutdown completed!")
 	}
 
